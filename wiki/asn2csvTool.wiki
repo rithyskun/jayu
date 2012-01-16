@@ -1,4 +1,4 @@
-#labels Free,ASN,decoder,Tool,converter,Featured
+#labels Free,ASN.1,decoder,Tool,converter,Featured
 = asn2csv Tool =
 
 {{{
