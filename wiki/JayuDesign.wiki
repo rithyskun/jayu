@@ -1,5 +1,5 @@
 #summary Jayu - Data Structure and Parse Logic
-#labels Free,ASN,Parser,ClassDesign,Datastructure,Decoder,Featured
+#labels Free,ASN.1,Parser,ClassDesign,Datastructure,Decoder,Featured
 
 = Data Structure and Parse Logic =
 
