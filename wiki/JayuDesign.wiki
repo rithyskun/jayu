@@ -1,5 +1,5 @@
 #summary Jayu - Data Structure and Parse Logic
-#labels Free,ASN,Parser,ClassDesign,Datastructure,Decoder
+#labels Free,ASN,Parser,ClassDesign,Datastructure,Decoder,Featured
 
 = Data Structure and Parse Logic =
 
@@ -156,4 +156,3 @@ CHOICE                   Reference, Similar to Java/C++ reference.
 }}}
 
 There are utility methods available in class `Utility` to convert byte array to int, String or perform nibble swap on byte array.
-
