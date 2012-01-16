@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<project name="jayu"  basedir="." default="build-all"> 
+	
+     <property name="src.dir" value="src"/> 
+     <property name="build.dir" value="build"/>
+	 <property name="dist.dir"  value="dist" />
+	 <property name="pack.dir"  value="pack" />
+	
+     <property name="lib.dir"  value="lib" />   
+ 	 <property name="test.dir" value = "${build.dir}/test/"/>	
+	 <property name="testdata.dir" value = "${test.dir}/testdata"/>
+	 
+	 <property name="package-jayu" value="jayu"/>	 
+	 <property name="package-test" value="test"/>
+	 <property name="mainclass-csvutil" value="jayu.CsvUtil"/>
+	 <property name="mainclass-test" value="test.Test_All_JUnit"/>
+	
+	 <property name="jarname-csvutil" value="jayu.jar"/>
+
+	 <target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>	 	
+	 </target>
+	 
+	 <target name="clean-all" depends="clean" >
+		<delete dir="${pack.dir}"/>
+	 </target>
+	 
+	
+
+	 <target name="init" depends="clean" description="let the build tree look like src tree">
+	   <mkdir dir="${build.dir}"/>
+   	   <copy todir="${build.dir}">
+			<fileset dir="${src.dir}"   includes="**/*"  excludes="**/*.java,**/design/*,bin/**"  />
+   	 		<fileset dir="${src.dir}"   includes="**/testdata/**" description="We need java (mapping files) from here" />
+	   </copy>
+	 </target>
+	
+
+    <path id="compile-classpath">
+		<pathelement location="${build.dir}" />
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+	
+	<path id="dist-run-classpath">
+	    <fileset dir="${dist.dir}" includes="**/*.jar"/>
+	</path>	
+
+    <target name="compile" depends="" >
+    	 <mkdir dir="${build.dir}"/>
+         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="compile-classpath" 
+				 includes="**/${package-jayu}/**/*.java" includeantruntime="false" />
+    </target>
+
+    <target name="compile-test" depends="init,compile" >           
+         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="compile-classpath" 
+				 includes="**/${package-test}/*.java" includeantruntime="false" />
+    </target>
+	
+    <target name="run" depends="compile">
+		<java classpathref="compile-classpath"  classname="${mainclass-csvutil}"  fork="true">
+        	<classpath path="${build.dir}"/>    	
+    	</java>
+	 </target>
+
+    <target name="run-test" depends="init,compile-test">
+    	<mkdir dir="${build.dir}/tmp"/>
+    	<property name="myclasspath" refid="compile-classpath"/>
+    	<echo message="classpath = ${myclasspath}" />
+    	
+		<java  dir="${build.dir}" classpathref="compile-classpath"  classname="${mainclass-test}" maxmemory="256m"  fork="true"/>
+	 </target>
+	
+<!-- ===================== Dist Related targets Below ======================= -->
+
+	<target name="dist" description="just jars the build directory" >
+  	   <jar destfile="${dist.dir}/${jarname-csvutil}" 
+  	  		basedir="${build.dir}" 
+  	  		excludes="**/testdata/*,Licence.txt" 
+		    manifest="${build.dir}/META-INF/MANIFEST.MF" />
+		
+		<copy todir="${dist.dir}" >  <fileset dir="${lib.dir}" excludes="**/junit*.jar" />  </copy>
+		<copy todir="${dist.dir}" >  <fileset dir="${src.dir}/bin"/>                        </copy>
+		<copy todir="${dist.dir}" >  <fileset dir="${src.dir}" includes="**/test/testdata/**"/>   </copy>
+		
+	</target>
+	
+	<target name="build-all" >
+		<antcall target="clean-all"> </antcall>
+		<antcall target="pack-src"> </antcall>
+		<antcall target="init"> </antcall>
+		<antcall target="compile"> </antcall>
+		<antcall target="dist"> </antcall>
+		<antcall target="pack"> </antcall>
+	</target>
+
+	<target name="dist-run" depends="dist" >
+		<java  dir="${dist.dir}" classpathref="dist-run-classpath"  classname="${mainclass-csvutil}" maxmemory="256m"  fork="true"/>		
+	</target>
+	
+    <target name="dist-clean" > 	   
+		<delete>  <fileset dir="${dist.dir}" includes="**/*.jar"/>  </delete>
+     </target>
+	
+	  <target name="pack" description="simply packs dist directory, assumes dist is completed." >
+		 <zip destfile="${pack.dir}/jayu.zip" basedir="dist" />	 
+	  </target>  
+	  
+	  <target name="pack-src" depends="clean" description="" >
+	     <zip destfile="${pack.dir}/jayu_src.zip" basedir="." />	 
+	  </target>  
+	
+	
+</project>
+
